@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: lifepilot
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/lifepilot
+    username: root
+    password: Hasinee@2010
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: llama3.2:latest
+          temperature: 0.2
+
+jwt:
+  secret: ${JWT_SECRET:change-this-development-secret-key-at-least-32-characters-long}
+  expiration: 86400000
