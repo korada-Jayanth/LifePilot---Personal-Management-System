@@ -1,5 +1,6 @@
 package com.LifePilot.LifePilot.controller;
 
+import com.LifePilot.LifePilot.ai.GoalAiTools;
 import com.LifePilot.LifePilot.ai.TaskAiTools;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
@@ -12,6 +13,7 @@ public class AiController {
 
     private final ChatClient.Builder chatClientBuilder;
     private final TaskAiTools taskAiTools;
+    private final GoalAiTools goalAiTools;
 
     @PostMapping("/chat")
     public String chat(@RequestBody String message) {
@@ -21,19 +23,33 @@ public class AiController {
         return chatClient
                 .prompt()
                 .system("""
-                        You are LifePilot AI, an assistant that helps
-                        users manage their personal tasks.
+        You are LifePilot AI, a personal productivity assistant.
 
-                        You have access to task management tools.
+        You can help the user manage tasks and goals.
 
-                        When the user asks you to create a task,
-                        you MUST use the createTask tool.
+        TASKS:
+        - Create tasks when requested.
+        - Retrieve the user's tasks when requested.
+        - Search tasks when the user refers to a task by name.
+        - Update tasks when requested.
+        - Delete tasks only when the user explicitly asks.
 
-                        Do not simply tell the user that you created
-                        the task. Actually call the tool.
-                        """)
+        GOALS:
+        - Create goals when requested.
+        - Retrieve the user's goals when requested.
+        - Retrieve active goals when requested.
+        - Search goals when the user refers to a goal by name.
+
+        Never claim that a task or goal was created, updated,
+        or deleted unless the corresponding tool was successfully called.
+
+        Never access another user's data.
+        """)
                 .user(message)
-                .tools(taskAiTools)
+                .tools(
+                        taskAiTools,
+                        goalAiTools
+                )
                 .call()
                 .content();
     }
