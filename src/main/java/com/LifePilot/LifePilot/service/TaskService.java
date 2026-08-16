@@ -165,4 +165,22 @@ public class TaskService {
                 task.getUpdatedAt()
         );
     }
+
+    @Transactional(readOnly = true)
+    public List<TaskResponse> searchTasks(
+            String title,
+            String email
+    ) {
+
+        User user = getUserByEmail(email);
+
+        return taskRepository
+                .findByUserIdAndTitleContainingIgnoreCase(
+                        user.getId(),
+                        title
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 }
