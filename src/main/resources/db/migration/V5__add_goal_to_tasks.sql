@@ -1,0 +1,8 @@
+ALTER TABLE tasks
+ADD COLUMN goal_id BIGINT NULL;
+
+ALTER TABLE tasks
+ADD CONSTRAINT fk_tasks_goal
+FOREIGN KEY (goal_id)
+REFERENCES goals(id)
+ON DELETE SET NULL;

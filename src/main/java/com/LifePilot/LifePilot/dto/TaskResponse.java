@@ -6,21 +6,14 @@ import com.LifePilot.LifePilot.entity.TaskStatus;
 import java.time.LocalDateTime;
 
 public record TaskResponse(
-
         Long id,
-
         String title,
-
         String description,
-
         TaskStatus status,
-
         TaskPriority priority,
-
         LocalDateTime dueDate,
-
+        Long goalId,
         LocalDateTime createdAt,
-
         LocalDateTime updatedAt
 ) {
 }

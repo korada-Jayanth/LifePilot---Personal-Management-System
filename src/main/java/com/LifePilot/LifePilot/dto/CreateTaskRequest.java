@@ -16,6 +16,8 @@ public record CreateTaskRequest(
 
         TaskPriority priority,
 
-        LocalDateTime dueDate
+        LocalDateTime dueDate,
+
+        Long goalId
 ) {
 }

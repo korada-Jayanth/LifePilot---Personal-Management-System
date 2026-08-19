@@ -23,14 +23,17 @@ public class TaskAiTools {
 
     @Tool(description = """
             Create a new task for the currently authenticated user.
-            Use this tool whenever the user asks to create, add,
-            remember, or schedule a new task.
+           Use this tool whenever the user asks to create, add,
+           remember, or schedule a new task.
+           If the task belongs to a specific goal, provide the goal ID.
+           Use null when the task is not associated with a goal.
             """)
     public TaskResponse createTask(
             String title,
             String description,
             TaskPriority priority,
-            LocalDateTime dueDate
+            LocalDateTime dueDate,
+            Long goalId
     ) {
 
         String email = getAuthenticatedEmail();
@@ -39,7 +42,8 @@ public class TaskAiTools {
                 title,
                 description,
                 priority,
-                dueDate
+                dueDate,
+                goalId
         );
 
         return taskService.createTask(request, email);

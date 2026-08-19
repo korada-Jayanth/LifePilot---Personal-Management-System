@@ -3,10 +3,8 @@ package com.LifePilot.LifePilot.service;
 import com.LifePilot.LifePilot.dto.CreateTaskRequest;
 import com.LifePilot.LifePilot.dto.TaskResponse;
 import com.LifePilot.LifePilot.dto.UpdateTaskRequest;
-import com.LifePilot.LifePilot.entity.Task;
-import com.LifePilot.LifePilot.entity.TaskPriority;
-import com.LifePilot.LifePilot.entity.TaskStatus;
-import com.LifePilot.LifePilot.entity.User;
+import com.LifePilot.LifePilot.entity.*;
+import com.LifePilot.LifePilot.repository.GoalRepository;
 import com.LifePilot.LifePilot.repository.TaskRepository;
 import com.LifePilot.LifePilot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +20,7 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final GoalRepository goalRepository;
 
     @Transactional
     public TaskResponse createTask(
@@ -30,6 +29,24 @@ public class TaskService {
     ) {
 
         User user = getUserByEmail(email);
+
+        Goal goal = null;
+
+        if (request.goalId() != null) {
+
+            goal = goalRepository.findById(request.goalId())
+                    .orElseThrow(() ->
+                            new IllegalArgumentException(
+                                    "Goal not found"
+                            )
+                    );
+
+            if (!goal.getUser().getId().equals(user.getId())) {
+                throw new SecurityException(
+                        "You are not allowed to use this goal"
+                );
+            }
+        }
 
         Task task = Task.builder()
                 .title(request.title())
@@ -42,6 +59,7 @@ public class TaskService {
                 .status(TaskStatus.TODO)
                 .dueDate(request.dueDate())
                 .user(user)
+                .goal(goal)
                 .build();
 
         Task savedTask = taskRepository.save(task);
@@ -161,6 +179,9 @@ public class TaskService {
                 task.getStatus(),
                 task.getPriority(),
                 task.getDueDate(),
+                task.getGoal() != null
+                        ? task.getGoal().getId()
+                        : null,
                 task.getCreatedAt(),
                 task.getUpdatedAt()
         );

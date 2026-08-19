@@ -46,6 +46,10 @@ public class Task {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "goal_id")
+    private Goal goal;
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
